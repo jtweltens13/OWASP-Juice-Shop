@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juice Shop Login</title>
+  <style>
+    body { font-family: Arial; background:#f5f5f5; }
+    .login-container {
+      width: 320px; margin: 100px auto; padding: 20px;
+      background: white; border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background:#ff5722; color:white; border:none; border-radius: 4px; }
+    .error { color:red; font-size: 14px; min-height: 18px; }
+  </style>
+
+  <script defer>
+    window.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("loginForm");
+      const errorMessage = document.getElementById("errorMessage");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // Client-side validation
+        if (!email || !password) {
+          errorMessage.textContent = "Fields cannot be empty.";
+          return;
+        }
+        if (!email.includes("@")) {
+          errorMessage.textContent = "Invalid email format.";
+          return;
+        }
+        if (password.length < 8) {
+          errorMessage.textContent = "Password must be at least 8 characters.";
+          return;
+        }
+
+        // Server-side validation
+        try {
+          const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            errorMessage.textContent = data.error || "Server validation failed.";
+            return;
+          }
+
+          errorMessage.textContent = "";
+          alert(data.message);
+        } catch {
+          errorMessage.textContent = "Could not reach server.";
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+
+    <!-- THIS is the missing piece -->
+    <form id="loginForm">
+      <input type="text" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password (8+ chars)" />
+      <div class="error" id="errorMessage"></div>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
