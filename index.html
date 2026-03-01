@@ -57,7 +57,12 @@
           }
 
           errorMessage.textContent = "";
+
+          /* ---- VULNERABLE LINE (for Part 3 exploit) ---- */
+          document.getElementById("output").innerHTML = email;
+
           alert(data.message);
+
         } catch {
           errorMessage.textContent = "Could not reach server.";
         }
@@ -70,7 +75,9 @@
   <div class="login-container">
     <h2>Login</h2>
 
-    <!-- THIS is the missing piece -->
+    <!-- XSS output target -->
+    <div id="output"></div>
+
     <form id="loginForm">
       <input type="text" id="email" placeholder="Email" />
       <input type="password" id="password" placeholder="Password (8+ chars)" />
